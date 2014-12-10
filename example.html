@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>suggest</title>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="jquery.typesuggest.js"></script>
+    <link rel="stylesheet" type="text/css" href="jquery.typesuggest.css">
+</head>
+<body>
+  <div class="autofill">
+    <input type="text"/>
+  </div>
+  <script>
+    $(".autofill").suggest(['Rick Ford', 'Travis Benton', 'Sol Garger', 'Paul Clark', 'Blake Kobelan'], {
+      search_key: 'values',
+      display_keys: ['email', 'phone'],
+      ajax: true,
+      url: 'http://demob.movelock.com/recip',
+      param: 'q',
+      results_key: 'results'
+    }, function(selected){
+      console.log("callback", selected)
+    });
+
+
+  </script>
+</body>
+</html>

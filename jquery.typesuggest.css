@@ -1,0 +1,41 @@
+.typesuggest {
+  display: inline-block;
+  position: relative;
+  z-index: 1000;
+  overflow: visible;
+}
+
+.typesuggest-list {
+  position: absolute;
+  top: 100%;
+  width: 100%;
+  border: 1px solid #CCC;
+  opacity: 0;
+  transition: opacity 200ms;
+  overflow: hidden;
+}
+
+.typesuggest input {
+  outline: none;
+}
+
+.typesuggest-list.selecting {
+  opacity: 1;
+}
+
+.typesuggest-list ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.typesuggest-list li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  width: 100%;
+}
+
+.typesuggest-list li.selected {
+  background: #CCC;
+}
