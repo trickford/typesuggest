@@ -10,6 +10,7 @@
   top: 100%;
   left: 0;
   width: 100%;
+  background: #FFF;
   border: 1px solid #CCC;
   opacity: 0;
   -webkit-transition: opacity 200ms;
