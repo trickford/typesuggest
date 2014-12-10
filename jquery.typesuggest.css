@@ -8,9 +8,14 @@
 .typesuggest-list {
   position: absolute;
   top: 100%;
+  left: 0;
   width: 100%;
   border: 1px solid #CCC;
   opacity: 0;
+  -webkit-transition: opacity 200ms;
+  -moz-transition: opacity 200ms;
+  -ms-transition: opacity 200ms;
+  -o-transition: opacity 200ms;
   transition: opacity 200ms;
   overflow: hidden;
 }

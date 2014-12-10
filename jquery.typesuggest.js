@@ -33,7 +33,7 @@
   TypeSuggest.prototype.init = function(){
     var self = this;
 
-    self.$fields = self.$el.find("input").addClass("typesuggest-input");
+    self.$fields = self.$el.find("input").addClass("typesuggest-input").attr('autocomplete', 'off');
     self.$suggest = $('<div class="typesuggest-list">').appendTo(self.$el);
   }
 
@@ -81,13 +81,6 @@
 
       }
 
-    })
-
-    self.$suggest.on('click', 'li', function(){
-      var data = $(this).data();
-
-      self.selectItem(data);
-      self.callback && self.callback(data);
     })
 
     self.$fields.on('keyup', function(e){
@@ -149,6 +142,20 @@
         // prevent caret from moving
         return false;
       }
+    })
+
+    self.$suggest.on('click', 'li', function(){
+      var data = $(this).data();
+
+      self.selectItem(data);
+      self.callback && self.callback(data);
+    })
+
+    self.$suggest.on('mouseover', 'li', function(){
+      var $li = $(this);
+
+      self.$suggest.find("li").removeClass("selected");
+      $li.addClass("selected");
     })
   }
 
