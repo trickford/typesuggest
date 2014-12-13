@@ -12,7 +12,8 @@
       ],
       ajax: false,
       url: '',
-      param: 'q'
+      param: 'q',
+      beforeSend: undefined
     };
 
     this.config = $.extend({}, defaults, options);
@@ -104,7 +105,12 @@
             self.startDebounce();
 
             if(self.config.ajax){
-              var url = self.config.url + "?" + self.config.param + "=" + val
+              if(self.config.beforeSend){
+                val = self.config.beforeSend(val);
+              }
+
+              var url = self.config.url + "?" + self.config.param + "=" + val;
+
               $.ajax({
                 url: url,
                 type: 'GET',
