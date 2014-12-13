@@ -109,7 +109,11 @@
                 val = self.config.beforeSend(val);
               }
 
-              var url = self.config.url + "?" + self.config.param + "=" + val;
+              if(self.config.url.indexOf('?') > -1){
+                var url = self.config.url + "&" + self.config.param + "=" + val;
+              }else{
+                var url = self.config.url + "?" + self.config.param + "=" + val;
+              }
 
               $.ajax({
                 url: url,
