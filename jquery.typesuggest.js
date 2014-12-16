@@ -167,6 +167,10 @@
       self.$suggest.find("li").removeClass("selected");
       $li.addClass("selected");
     })
+
+    $('html').on('click', function(){
+      self.updateList(true);
+    })
   }
 
   TypeSuggest.prototype.move = function(where){
@@ -207,11 +211,11 @@
     }
   }
 
-  TypeSuggest.prototype.updateList = function(){
+  TypeSuggest.prototype.updateList = function(clear){
     var self = this;
     var $list = $('<ul>');
 
-    if(self.options.length){
+    if(self.options.length && !clear){
       self.$suggest.addClass("selecting");
 
       var options = self.options;
@@ -236,7 +240,7 @@
       self.$suggest.html($list);
 
     }else{
-      self.$suggest.removeClass("selecting")
+      self.$suggest.removeClass("selecting").empty();;
     }
   }
 
@@ -244,7 +248,7 @@
     var self = this;
 
     self.options = [];
-    self.updateList();
+    self.updateList(true);
 
     if(!self.config.display_keys){
       self.$currentField.val(data.option);
