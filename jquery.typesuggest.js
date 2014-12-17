@@ -4,7 +4,7 @@
     var defaults = {
       min_characters: 2,
       display_key: undefined,
-      search_key: undefined,
+      search_keys: undefined,
       ignored: [
         ' ',
         ',',
@@ -14,7 +14,8 @@
       url: '',
       param: 'q',
       beforeSend: undefined,
-      callback: undefined
+      callback: undefined,
+      ignored_key: undefined
     };
 
     this.config = $.extend({}, defaults, options);
@@ -131,17 +132,31 @@
             }else{
               // compare value to provided list
               $.each(self.data, function(i, item){
-                var valLower = val.toLowerCase();
-                var itemLower;
+                if(self.config.ignored_key && !item[self.config.ignored_key]){
+                  var valLower = val.toLowerCase();
+                  var itemLower;
 
-                if(self.config.search_key){
-                  itemLower = item[self.config.search_key].toLowerCase();
-                }else{
-                  itemLower = item.toLowerCase();
-                }
+                  if(self.config.search_keys){
+                    $.each(self.config.search_keys, function(i, search_key){
 
-                if(itemLower.search(valLower) > -1){
-                  self.options.push(item);
+                      // type check search keys, checking for string or array (object)
+                      if(typeof item[search_key] === 'string'){
+                        itemLower = item[search_key].toLowerCase();
+                      }
+
+                      if(typeof item[search_key] === 'object' && item[search_key].length){
+                        $.each(item[search_key], function(i, keyword){
+                          itemLower = keyword.toLowerCase();
+                        })
+                      }
+                    })
+                  }else{
+                    itemLower = item.toLowerCase();
+                  }
+
+                  if(itemLower.search(valLower) > -1){
+                    self.options.push(item);
+                  }
                 }
               })
 
