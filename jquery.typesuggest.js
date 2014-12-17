@@ -1,6 +1,6 @@
 (function($) {
 
-  function TypeSuggest(el, data, options, callback){
+  function TypeSuggest(el, data, options){
     var defaults = {
       min_characters: 2,
       display_key: undefined,
@@ -13,7 +13,8 @@
       ajax: false,
       url: '',
       param: 'q',
-      beforeSend: undefined
+      beforeSend: undefined,
+      callback: undefined
     };
 
     this.config = $.extend({}, defaults, options);
@@ -22,9 +23,6 @@
     this.$el = $(el).addClass("typesuggest");
 
     this.data = data;
-
-    // set callback
-    this.callback = typeof callback === "function" && callback || false;
 
     this.init();
     this.events();
@@ -90,8 +88,13 @@
 
       self.$currentField = $field;
 
+      // if esc key, hide suggestions
+      if(key === 27){
+        self.updateList(true);
+      }
+
       // if not up or down arrows or enter key, fill suggestion
-      if(key !== 40 && key !== 38 && key !== 13){
+      if(key !== 40 && key !== 38 && key !== 13 && key !== 27){
 
         if(!self.debounce){
 
@@ -158,7 +161,7 @@
       var data = $(this).data();
 
       self.selectItem(data);
-      self.callback && self.callback(data);
+      self.config.callback && self.config.callback(data);
     })
 
     self.$suggest.on('mouseover', 'li', function(){
@@ -168,6 +171,7 @@
       $li.addClass("selected");
     })
 
+    // if click outside the box, hide suggestions
     $('html').on('click', function(){
       self.updateList(true);
     })
@@ -215,7 +219,7 @@
     var self = this;
     var $list = $('<ul>');
 
-    if(self.options.length && !clear){
+    if(self.options && self.options.length && !clear){
       self.$suggest.addClass("selecting");
 
       var options = self.options;
@@ -254,7 +258,7 @@
       self.$currentField.val(data.option);
     }
 
-    self.callback && self.callback(data);
+    self.config.callback && self.config.callback(data);
   }
 
   TypeSuggest.prototype.startDebounce = function(){
@@ -267,8 +271,8 @@
     }, 250)
   }
 
-  $.fn.suggest = function(data, options, callback){
-    var suggest = new TypeSuggest(this, data, options, callback);
+  $.fn.suggest = function(data, options){
+    var suggest = new TypeSuggest(this, data, options);
     return this;
   }
 
