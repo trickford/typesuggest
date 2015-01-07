@@ -176,7 +176,6 @@
       var data = $(this).data();
 
       self.selectItem(data);
-      self.config.callback && self.config.callback(data);
     })
 
     self.$suggest.on('mouseover', 'li', function(){
