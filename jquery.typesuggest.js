@@ -172,12 +172,6 @@
       }
     })
 
-    self.$suggest.on('click', 'li', function(){
-      var data = $(this).data();
-
-      self.selectItem(data);
-    })
-
     self.$suggest.on('mouseover', 'li', function(){
       var $li = $(this);
 
@@ -253,6 +247,10 @@
         }
 
         $list.append($listItem);
+
+        $listItem.on('click', function(){
+          self.selectItem({option: option});
+        })
       })
 
       self.$suggest.html($list);
