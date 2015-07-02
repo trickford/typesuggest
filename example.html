@@ -12,15 +12,11 @@
     <input type="text"/>
   </div>
   <script>
-    $(".autofill").suggest(['Rick Ford', 'Travis Benton', 'Sol Garger', 'Paul Clark', 'Blake Kobelan'], {
-      search_key: 'values',
-      display_keys: ['email', 'phone'],
-      ajax: true,
-      url: 'http://demob.movelock.com/recip',
-      param: 'q',
-      results_key: 'results'
-    }, function(selected){
-      console.log("callback", selected)
+    $(".autofill").suggest({
+      data: ['Rick Ford', 'Travis Benton', 'Sol Garger', 'Paul Clark', 'Blake Kobelan'],
+      callback: function(selected){
+        console.log("callback", selected)
+      }
     });
 
 

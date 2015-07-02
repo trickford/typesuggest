@@ -1,21 +1,16 @@
 (function($) {
 
-  function TypeSuggest(el, data, options){
+  function TypeSuggest(el, options){
     var defaults = {
+      data: undefined,
       min_characters: 2,
       display_key: undefined,
       search_keys: undefined,
-      ignored: [
-        ' ',
-        ',',
-        '.'
-      ],
       ajax: false,
       url: '',
       param: 'q',
       beforeSend: undefined,
-      callback: undefined,
-      ignored_key: undefined
+      callback: undefined
     };
 
     this.config = $.extend({}, defaults, options);
@@ -23,7 +18,7 @@
     // set parent element
     this.$el = $(el).addClass("typesuggest");
 
-    this.data = data;
+    this.data = this.config.data;
 
     this.init();
     this.events();
@@ -132,31 +127,28 @@
             }else{
               // compare value to provided list
               $.each(self.data, function(i, item){
-                if(self.config.ignored_key && !item[self.config.ignored_key]){
-                  var valLower = val.toLowerCase();
-                  var itemLower;
+                var valLower = val.toLowerCase();
+                var itemLower;
 
-                  if(self.config.search_keys){
-                    $.each(self.config.search_keys, function(i, search_key){
+                if(self.config.search_keys){
+                  $.each(self.config.search_keys, function(i, search_key){
+                    // type check search keys, checking for string or array (object)
+                    if(typeof item[search_key] === 'string'){
+                      itemLower = item[search_key].toLowerCase();
+                    }
 
-                      // type check search keys, checking for string or array (object)
-                      if(typeof item[search_key] === 'string'){
-                        itemLower = item[search_key].toLowerCase();
-                      }
+                    if(typeof item[search_key] === 'object' && item[search_key].length){
+                      $.each(item[search_key], function(i, keyword){
+                        itemLower = keyword.toLowerCase();
+                      })
+                    }
+                  })
+                }else{
+                  itemLower = item.toLowerCase();
+                }
 
-                      if(typeof item[search_key] === 'object' && item[search_key].length){
-                        $.each(item[search_key], function(i, keyword){
-                          itemLower = keyword.toLowerCase();
-                        })
-                      }
-                    })
-                  }else{
-                    itemLower = item.toLowerCase();
-                  }
-
-                  if(itemLower.search(valLower) > -1){
-                    self.options.push(item);
-                  }
+                if(itemLower.search(valLower) > -1){
+                  self.options.push(item);
                 }
               })
 
@@ -283,8 +275,8 @@
     }, 250)
   }
 
-  $.fn.suggest = function(data, options){
-    var suggest = new TypeSuggest(this, data, options);
+  $.fn.suggest = function(options){
+    var suggest = new TypeSuggest(this, options);
     return this;
   }
 
