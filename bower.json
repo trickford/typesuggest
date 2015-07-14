@@ -1,0 +1,20 @@
+{
+  "name": "typesuggest",
+  "version": "1.0",
+  "homepage": "https://github.com/trickford/typesuggest",
+  "authors": [
+    "Rick Ford <rickfordrick@gmail.com>"
+  ],
+  "main": [
+    "jquery.typesuggest.js",
+    "jquery.typesuggest.css"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
