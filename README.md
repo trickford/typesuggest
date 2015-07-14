@@ -28,6 +28,24 @@ display_keys: ['foo', 'bar'],
 Type: **Array**
 keys to display in suggest menu
 
+For complex span structure, you can pass in objects with nested key names, like so:
+```
+display_keys: [
+  'foo',
+  {
+    name: 'bars',
+    keys: ['bar1', 'bar2']
+  }
+]
+```
+This will output the following:
+```
+<span class="foo">foo</span>
+<span class="bars">
+  <span class="bar1">bar1</span>
+  <span class="bar2">bar2</span>
+</span>
+```
 ###search_keys
 ```
 search_keys: ['name'],
@@ -55,6 +73,13 @@ param: 'q',
 ```
 Type: **String**
 ajax query param
+
+###params
+```
+params: 'limit=20&',
+```
+Type: **String**
+additional query params, be sure to include ampersand
 
 ###beforeSend
 ```

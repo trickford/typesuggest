@@ -4,13 +4,15 @@
     var defaults = {
       data: undefined,
       min_characters: 2,
-      display_key: undefined,
+      display_keys: undefined,
       search_keys: undefined,
       ajax: false,
       url: '',
       param: 'q',
+      params: '',
       beforeSend: undefined,
-      callback: undefined
+      callback: undefined,
+      debounce: 250
     };
 
     this.config = $.extend({}, defaults, options);
@@ -109,9 +111,9 @@
               }
 
               if(self.config.url.indexOf('?') > -1){
-                var url = self.config.url + "&" + self.config.param + "=" + val;
+                var url = self.config.url + "&" + self.config.params + self.config.param + "=" + val;
               }else{
-                var url = self.config.url + "?" + self.config.param + "=" + val;
+                var url = self.config.url + "?" + self.config.params + self.config.param + "=" + val;
               }
 
               $.ajax({
@@ -215,6 +217,36 @@
     }
   }
 
+  TypeSuggest.prototype.parseDisplay = function(option, display_keys){
+    var self = this;
+    var output = [];
+    var parseKeys = function(keys){
+
+      $.each(keys, function(i, key){
+
+        if(typeof key === 'object'){
+
+          output.push('<span' + (key.name && ' class="' + key.name + '"' || '') + '>');
+
+          parseKeys(key.keys && key.keys);
+
+          output.push('</span>');
+
+        }else{
+
+          output.push('<span class="' + key + '">' + option[key] + '</span>');
+
+        }
+
+      })
+
+    }
+
+    parseKeys(display_keys);
+
+    return output.join('');
+  }
+
   TypeSuggest.prototype.updateList = function(clear){
     var self = this;
     var $list = $('<ul>');
@@ -227,13 +259,7 @@
         var $listItem = $("<li>").data("option", option);
 
         if(self.config.display_keys){
-          var output = '';
-
-          $.each(self.config.display_keys, function(i, key){
-            output += '<span class="' + key + '">' + option[key] + '</span>'
-          })
-
-          $listItem.html(output);
+          $listItem.html(self.parseDisplay(option, self.config.display_keys));
         }else{
           $listItem.html(option);
         }
@@ -272,7 +298,7 @@
 
     setTimeout(function(){
       self.debounce = false;
-    }, 250)
+    }, self.config.debounce)
   }
 
   $.fn.suggest = function(options){
