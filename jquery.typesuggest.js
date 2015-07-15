@@ -235,7 +235,7 @@
 
         }else{
 
-          if(option[key] && option[key].length){
+          if(option[key]){
             output.push('<span class="' + key + '">' + option[key] + '</span>');
           }
 
