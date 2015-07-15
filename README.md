@@ -18,8 +18,15 @@ Strings or Objects with data to be searched
 ```
 min_characters: 2,
 ```
-Typer : **Integer**
+Type : **Integer**
 minimum characters before making a suggestion
+
+###max_suggest
+```
+max_suggest: 5,
+```
+Type : **Integer**
+maximum number of items to show in the dropdown
 
 ###display_keys
 ```
