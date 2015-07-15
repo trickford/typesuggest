@@ -4,6 +4,7 @@
     var defaults = {
       data: undefined,
       min_characters: 2,
+      display_key: false,
       display_keys: undefined,
       search_keys: undefined,
       ajax: false,
@@ -289,7 +290,9 @@
     self.options = [];
     self.updateList(true);
 
-    if(!self.config.display_keys){
+    if(self.config.display_key){
+      self.$currentField.val(data.option[self.config.display_key]);
+    }else if(self.config.display_key === false){
       self.$currentField.val(data.option);
     }
 
