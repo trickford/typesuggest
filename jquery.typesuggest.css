@@ -42,6 +42,10 @@
   width: 100%;
 }
 
+.typesuggest-list li + li {
+  border-top: 1px solid #CCC;
+}
+
 .typesuggest-list li.selected {
   background: #CCC;
 }

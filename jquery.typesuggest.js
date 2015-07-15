@@ -12,7 +12,8 @@
       params: '',
       beforeSend: undefined,
       callback: undefined,
-      debounce: 250
+      debounce: 250,
+      max_suggest: 5
     };
 
     this.config = $.extend({}, defaults, options);
@@ -121,7 +122,7 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function(data, textStatus, xhr){
-                  self.options = data[self.config.results_key];
+                  self.options = self.config.results_key && data[self.config.results_key] || data;
 
                   self.updateList();
                 }
@@ -234,7 +235,9 @@
 
         }else{
 
-          output.push('<span class="' + key + '">' + option[key] + '</span>');
+          if(option[key] && option[key].length){
+            output.push('<span class="' + key + '">' + option[key] + '</span>');
+          }
 
         }
 
@@ -256,19 +259,21 @@
 
       var options = self.options;
       $.each(options, function(i, option){
-        var $listItem = $("<li>").data("option", option);
+        if(i < self.config.max_suggest){
+          var $listItem = $("<li>").data("option", option);
 
-        if(self.config.display_keys){
-          $listItem.html(self.parseDisplay(option, self.config.display_keys));
-        }else{
-          $listItem.html(option);
+          if(self.config.display_keys){
+            $listItem.html(self.parseDisplay(option, self.config.display_keys));
+          }else{
+            $listItem.html(option);
+          }
+
+          $list.append($listItem);
+
+          $listItem.on('click', function(){
+            self.selectItem({option: option});
+          })
         }
-
-        $list.append($listItem);
-
-        $listItem.on('click', function(){
-          self.selectItem({option: option});
-        })
       })
 
       self.$suggest.html($list);
