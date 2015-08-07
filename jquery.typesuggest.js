@@ -42,6 +42,7 @@
     self.$fields.on('keydown', function(e){
       var $field = $(this);
       var key = e.keyCode || e.which;
+      var val = $field.val();
 
       // if up or down arrows, scroll thru list. if enter key, select item
       if(key == 40 || key == 38 || key == 13){
@@ -65,9 +66,26 @@
         }else if(e.keyCode == 13){ // enter
 
           var $selectedItem = self.$suggest.find(".selected");
-          var data = $selectedItem.data();
 
-          self.selectItem(data);
+          if($selectedItem.length){
+            // if user selects an item from the list
+            var data = $selectedItem.data();
+
+            self.selectItem(data);
+
+          }else if(val.length){
+            // if user does not select an item from the list, search
+            self.fetchList(val, function(){
+
+              // then, if there is only one result, continue as if they had selected that result
+              if(self.options.length === 1){
+
+                self.selectItem({ option: self.options[0] });
+
+              }
+
+            });
+          }
 
           // prevent caret from moving
           return false;
@@ -101,66 +119,12 @@
           // get value
           var val = $field.val();
 
-          self.options = [];
-
-          if(val.length && val.length >= self.config.min_characters){
-
-            self.startDebounce();
-
-            if(self.config.ajax){
-              if(self.config.beforeSend){
-                val = self.config.beforeSend(val);
-              }
-
-              if(self.config.url.indexOf('?') > -1){
-                var url = self.config.url + "&" + self.config.params + self.config.param + "=" + val;
-              }else{
-                var url = self.config.url + "?" + self.config.params + self.config.param + "=" + val;
-              }
-
-              $.ajax({
-                url: url,
-                type: 'GET',
-                dataType: 'json',
-                success: function(data, textStatus, xhr){
-                  self.options = self.config.results_key && data[self.config.results_key] || data;
-
-                  self.updateList();
-                }
-              })
-            }else{
-              // compare value to provided list
-              $.each(self.data, function(i, item){
-                var valLower = val.toLowerCase();
-                var itemLower;
-
-                if(self.config.search_keys){
-                  $.each(self.config.search_keys, function(i, search_key){
-                    // type check search keys, checking for string or array (object)
-                    if(typeof item[search_key] === 'string'){
-                      itemLower = item[search_key].toLowerCase();
-                    }
-
-                    if(typeof item[search_key] === 'object' && item[search_key].length){
-                      $.each(item[search_key], function(i, keyword){
-                        itemLower = keyword.toLowerCase();
-                      })
-                    }
-                  })
-                }else{
-                  itemLower = item.toLowerCase();
-                }
-
-                if(itemLower.search(valLower) > -1){
-                  self.options.push(item);
-                }
-              })
-
-            }
-
-          }
+          self.fetchList(val, function(){
+            self.updateList();
+          });
 
           self.updateList();
+
         }
       }else{
         // prevent caret from moving
@@ -179,6 +143,71 @@
     $('html').on('click', function(){
       self.updateList(true);
     })
+  }
+
+  TypeSuggest.prototype.fetchList = function(val, callback){
+    var self = this;
+
+    self.options = [];
+
+    if(val.length && val.length >= self.config.min_characters){
+
+      self.startDebounce();
+
+      if(self.config.ajax){
+        if(self.config.beforeSend){
+          val = self.config.beforeSend(val);
+        }
+
+        if(self.config.url.indexOf('?') > -1){
+          var url = self.config.url + "&" + self.config.params + self.config.param + "=" + val;
+        }else{
+          var url = self.config.url + "?" + self.config.params + self.config.param + "=" + val;
+        }
+
+        $.ajax({
+          url: url,
+          type: 'GET',
+          dataType: 'json',
+          success: function(data, textStatus, xhr){
+            self.options = self.config.results_key && data[self.config.results_key] || data;
+
+            typeof callback === 'function' && callback();
+          }
+        })
+      }else{
+        // compare value to provided list
+        $.each(self.data, function(i, item){
+          var valLower = val.toLowerCase();
+          var itemLower;
+
+          if(self.config.search_keys){
+            $.each(self.config.search_keys, function(i, search_key){
+              // type check search keys, checking for string or array (object)
+              if(typeof item[search_key] === 'string'){
+                itemLower = item[search_key].toLowerCase();
+              }
+
+              if(typeof item[search_key] === 'object' && item[search_key].length){
+                $.each(item[search_key], function(i, keyword){
+                  itemLower = keyword.toLowerCase();
+                })
+              }
+            })
+          }else{
+            itemLower = item.toLowerCase();
+          }
+
+          if(itemLower.search(valLower) > -1){
+            self.options.push(item);
+
+            typeof callback === 'function' && callback();
+          }
+        })
+
+      }
+
+    }
   }
 
   TypeSuggest.prototype.move = function(where){
